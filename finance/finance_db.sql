@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-12-05 04:52:40
+-- 產生時間： 2025-12-15 09:35:41
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.2.12
 
@@ -96,6 +96,30 @@ INSERT INTO `daily_account` (`id`, `time`, `currency`, `store`, `date`, `item`, 
 -- --------------------------------------------------------
 
 --
+-- 資料表結構 `member`
+--
+
+CREATE TABLE `member` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `account` varchar(64) DEFAULT NULL,
+  `pwd` varchar(100) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `is_admin` int(2) DEFAULT 0,
+  `money_key` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- 傾印資料表的資料 `member`
+--
+
+INSERT INTO `member` (`id`, `account`, `pwd`, `email`, `created_at`, `updated_at`, `is_admin`, `money_key`) VALUES
+(9, 'dog30511', '$2y$10$R6xFNZZg..WJ4uAf4PijUOIXJmy6Rr9UrgPB7ZfqOwUAaylwTfsNi', 'dog30511@gmail.com', '2025-12-15 06:56:37', '2025-12-15 07:53:34', 0, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- 資料表結構 `payment_method`
 --
 
@@ -132,6 +156,12 @@ ALTER TABLE `daily_account`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 資料表索引 `member`
+--
+ALTER TABLE `member`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- 資料表索引 `payment_method`
 --
 ALTER TABLE `payment_method`
@@ -152,6 +182,12 @@ ALTER TABLE `category`
 --
 ALTER TABLE `daily_account`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `member`
+--
+ALTER TABLE `member`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `payment_method`
