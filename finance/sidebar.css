@@ -1,0 +1,24 @@
+/* 左側滑出 */
+.side-menu{
+  position:fixed; left:-220px; top:0; width:220px; height:100%;
+  background:#ffffffee; backdrop-filter:blur(6px);
+  box-shadow:4px 0 12px rgba(0,0,0,.2);
+  transition:all .3s ease; z-index:2000; padding:20px;
+}
+.side-menu.open{ left:0; }
+
+.side-header{ font-size:18px; font-weight:700; color:#444; margin-bottom:20px; }
+.side-links a{
+  display:block; padding:12px 0; color:#555; font-size:15px; font-weight:600;
+  text-decoration:none; border-bottom:1px solid #eee; transition:.2s;
+}
+.side-links a:hover{ color:#764ba2; }
+
+.keep-login{ margin-top:20px; display:flex; gap:10px; align-items:center; font-size:14px; color:#444; }
+
+.side-toggle{
+  position:fixed; top:20px; left:20px; background:#ffffffcc; padding:10px 14px;
+  border-radius:10px; font-size:20px; box-shadow:0 4px 12px rgba(0,0,0,.2);
+  cursor:pointer; z-index:2100; transition:.2s;
+}
+.side-toggle:hover{ transform:scale(1.05); }

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>單筆投資計算</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<style>
+    body{
+        background:#a9d9e8;
+        font-family:Arial;
+    }
+    .block{
+        width:600px;
+        margin:20px auto;
+        padding:20px;
+        background:#b5dce8;
+        border-radius:10px;
+        text-align:center;
+    }
+    input{
+        width:250px;
+        height:28px;
+        margin-left:10px;
+    }
+    button{
+        margin-top:15px;
+        padding:8px 20px;
+    }
+    #result{
+        margin-top:40px;
+        font-size:20px;
+        line-height:32px;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="block">
+    <div>
+        單筆金額 <input type="number" id="money">
+    </div><br>
+
+    <div>
+        投資時間 <input type="number" id="years">
+    </div><br>
+
+    <div>
+        投資利率 <input type="number" id="rate" step="0.01">
+    </div><br>
+
+    <button id="calc">單筆投資計算</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+$("#calc").click(function(){
+
+    let money = parseFloat($("#money").val());
+    let years = parseInt($("#years").val());
+    let rate  = parseFloat($("#rate").val())/100;
+
+    if(isNaN(money) || isNaN(years) || isNaN(rate)){
+        alert("請填寫完整資料！");
+        return;
+    }
+
+    let output = "";
+    let current = money;
+
+    for(let i=1; i<=years; i++){
+        current = current * (1 + rate);
+        output += i + ". " + current.toFixed(0) + "元<br>";
+    }
+
+    $("#result").html(output);
+});
+</script>
+
+</body>
+</html>

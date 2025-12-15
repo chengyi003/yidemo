@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<title>兩相制 ALL-IN-ONE 路口（內縮 + 👤）</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#92d96a;overflow:hidden;font-family:Arial}
+.scene{position:relative;width:100vw;height:100vh}
+
+/* ————————— 道路 ————————— */
+.road-h{position:absolute;top:50%;left:0;width:100%;height:220px;transform:translateY(-50%);background:#1f1f1f;}
+.road-v{position:absolute;left:50%;top:0;width:220px;height:100%;transform:translateX(-50%);background:#1f1f1f;}
+
+/* ————————— 斑馬線 ————————— */
+.cross{position:absolute;z-index:5}
+.cross-n,.cross-s{
+  width:220px;height:60px;left:calc(50% - 110px);
+  background:repeating-linear-gradient(90deg,#fff 0 12px, transparent 12px 24px);
+}
+.cross-n{top:calc(50% - 170px)}
+.cross-s{top:calc(50% + 110px)}
+.cross-w,.cross-e{
+  width:60px;height:220px;top:calc(50% - 110px);
+  background:repeating-linear-gradient(0deg,#fff 0 12px, transparent 12px 24px);
+}
+.cross-w{left:calc(50% - 170px)}
+.cross-e{left:calc(50% + 110px)}
+
+/* ————————— 交通燈 ————————— */
+.lightbox{
+  width:70px;background:#222;padding:10px;border-radius:12px;
+  display:flex;gap:10px;flex-direction:column;position:absolute;z-index:20
+}
+.light{width:40px;height:40px;border-radius:50%;background:#000;opacity:.25;transition:.2s}
+.light.on{opacity:1;background:currentColor;filter:drop-shadow(0 0 10px currentColor)}
+.lt-n{left:calc(50% - 35px);top:calc(50% - 350px)}
+.lt-s{left:calc(50% - 35px);top:calc(50% + 200px)}
+.lt-w{left:calc(50% - 230px);top:calc(50% - 30px)}
+.lt-e{left:calc(50% + 160px);top:calc(50% - 30px)}
+
+/* ————————— 車子 ————————— */
+.car-ew,.car-ns{position:absolute;z-index:4}
+.car-ew{width:140px;height:60px;background:#ff6b6b;border-radius:12px;top:calc(50% - 30px);left:-200px}
+.car-ns{width:60px;height:140px;background:#56b6ff;border-radius:12px;left:calc(50% - 30px);top:-200px}
+
+/* ————————— 行人 👤 ————————— */
+.walker{
+  position:absolute;
+  font-size:38px;
+  color:#ffffff;
+  filter:drop-shadow(0 0 5px #000);
+  z-index:30;
+  user-select:none;
+}
+
+/* ★ 四人全部往內縮 30px ★ */
+.w-nw{left:calc(50% - 170px);top:calc(50% - 200px)}
+.w-ne{left:calc(50% + 120px);top:calc(50% - 200px)}
+.w-se{left:calc(50% + 120px);top:calc(50% + 150px)}
+.w-sw{left:calc(50% - 170px);top:calc(50% + 150px)}
+</style>
+</head>
+
+<body>
+<div class="scene">
+
+  <div class="road-h"></div><div class="road-v"></div>
+
+  <div class="cross cross-n"></div><div class="cross cross-s"></div>
+  <div class="cross cross-w"></div><div class="cross cross-e"></div>
+
+  <!-- 交通燈 -->
+  <div class="lightbox lt-n"><div id="n-red" class="light"></div><div id="n-ylw" class="light"></div><div id="n-grn" class="light"></div></div>
+  <div class="lightbox lt-s"><div id="s-red" class="light"></div><div id="s-ylw" class="light"></div><div id="s-grn" class="light"></div></div>
+  <div class="lightbox lt-w"><div id="w-red" class="light"></div><div id="w-ylw" class="light"></div><div id="w-grn" class="light"></div></div>
+  <div class="lightbox lt-e"><div id="e-red" class="light"></div><div id="e-ylw" class="light"></div><div id="e-grn" class="light"></div></div>
+
+  <!-- 車 -->
+  <div class="car-ew"></div>
+  <div class="car-ns"></div>
+
+  <!-- 行人（👤） -->
+  <div class="walker w-nw">👤</div>
+  <div class="walker w-ne">👤</div>
+  <div class="walker w-se">👤</div>
+  <div class="walker w-sw">👤</div>
+
+</div>
+
+<script>
+/* =========================================
+      ★ 兩相制 ALL-IN-ONE（完整整合版）★
+   ========================================= */
+
+let phase = 0;  // 0=南北綠, 1=東西綠
+
+const WALK_T = 2000;
+const CAR_T  = 5000;
+const PAUSE  = 300;
+const GAP    = 30;
+
+function geo(){
+  const cx = innerWidth/2, cy = innerHeight/2;
+  return {
+    cx, cy,
+    westX:  cx - 170,
+    northY: cy - 170,
+    eastX:  cx + 110,
+    southY: cy + 110,
+    carEW_W: 140,
+    carNS_H: 140
+  };
+}
+
+/* ————————— 燈 ————————— */
+function setLight(dir,color){
+  $("#"+dir+"-red,#"+dir+"-ylw,#"+dir+"-grn").removeClass("on").css("color","");
+  if(color==="red")   $("#"+dir+"-red").addClass("on").css("color","red");
+  if(color==="green") $("#"+dir+"-grn").addClass("on").css("color","limegreen");
+}
+function lightsNS(){
+  setLight("n","green"); setLight("s","green");
+  setLight("e","red");   setLight("w","red");
+}
+function lightsEW(){
+  setLight("n","red");   setLight("s","red");
+  setLight("e","green"); setLight("w","green");
+}
+
+/* ————————— 行人 ————————— */
+function rememberOrigins(){
+  $(".walker").each(function(){
+    $(this).data("ox", parseInt($(this).css("left")));
+    $(this).data("oy", parseInt($(this).css("top")));
+  });
+}
+
+function walkTo($w, x2, y2){
+  $w.stop(true).animate({left:x2,top:y2}, WALK_T, "linear", ()=>{
+    setTimeout(()=>{
+      $w.css({left:$w.data("ox"),top:$w.data("oy")});
+    }, PAUSE);
+  });
+}
+
+/* ————————— 車 ————————— */
+function carStop_EW(){
+  const g=geo();
+  $(".car-ew").stop(true).css({left: g.westX - GAP - g.carEW_W});
+}
+function carStart_EW(){
+  $(".car-ew").stop(true).animate({left:"110%"}, CAR_T, "linear", ()=>$(".car-ew").css("left","-200px"));
+}
+
+function carStop_NS(){
+  const g=geo();
+  $(".car-ns").stop(true).css({top: g.northY - GAP - g.carNS_H});
+}
+function carStart_NS(){
+  $(".car-ns").stop(true).animate({top:"110%"}, CAR_T, "linear", ()=>$(".car-ns").css("top","-200px"));
+}
+
+/* ————————— 主循環 ————————— */
+function runPhase(){
+  const g=geo();
+
+  if(phase===0){
+    /* === Phase 0：南北綠燈 === */
+    lightsNS();
+    carStart_NS();
+    carStop_EW();
+
+    // 行人 7/9 往下
+    walkTo($(".w-nw"), $(".w-nw").data("ox"), $(".w-nw").data("oy")+220);
+    walkTo($(".w-ne"), $(".w-ne").data("ox"), $(".w-ne").data("oy")+220);
+
+  } else {
+    /* === Phase 1：東西綠燈 === */
+    lightsEW();
+    carStart_EW();
+    carStop_NS();
+
+    // 行人 1/7 左右
+    walkTo($(".w-nw"), $(".w-ne").data("ox"), $(".w-ne").data("oy"));
+    walkTo($(".w-sw"), $(".w-se").data("ox"), $(".w-se").data("oy"));
+  }
+
+  phase = (phase===0 ? 1 : 0);
+}
+
+/* ————————— LOOP ————————— */
+$(function(){
+  rememberOrigins();
+  carStop_EW(); carStop_NS();
+  runPhase();
+  setInterval(runPhase, (WALK_T+PAUSE) + CAR_T);
+
+  $(window).on("resize", ()=>{ carStop_EW(); carStop_NS(); });
+});
+</script>
+
+</body>
+</html>
