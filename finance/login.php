@@ -1,3 +1,17 @@
+<?php  
+
+require 'auth_check.php';
+
+if (!empty($_SESSION['user'])) {
+    include "my_index.php"; // 個人登入後的頁面
+} else {
+    header("index.php"); // 一般訪客版
+}
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>

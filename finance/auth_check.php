@@ -2,54 +2,64 @@
 // auth_check.php
 require __DIR__ . '/bootstrap.php';
 
-// 若 session 已登入，直接放行
+// ===============================
+// 1. 若 session 已登入 → 直接放行
+// ===============================
 if (!empty($_SESSION['user'])) {
-    return;
+    return; // 使用者已登入
 }
 
-// 沒有 session，嘗試用 cookie 自動登入
+// ===============================
+// 2. 無 session → 嘗試 cookie 自動登入
+// ===============================
 $key = $_COOKIE['money_key'] ?? '';
+
 if ($key === '') {
-    header("Location: login.php");
-    exit;
+    return; // 無 cookie → 視為訪客，直接放行（不導向 login）
 }
 
 // money_key 格式：{id}.{token}.{time}.{hmac}
 $parts = explode('.', $key, 4);
 if (count($parts) !== 4) {
-    header("Location: login.php");
-    exit;
+    return; // 格式不符 → 當訪客處理
 }
+
 [$uid, $token, $time, $hmac] = $parts;
 
 // 驗證 HMAC
-$secret = env('SECRET_KEY', 'fallback_secret'); // 記得把 .env 換成自己的值
+$secret = env('SECRET_KEY', 'fallback_secret');
 $expect = hash_hmac('sha256', $uid . $token . $time, $secret);
+
 if (!hash_equals($expect, $hmac)) {
-    header("Location: login.php");
-    exit;
+    return; // 驗證失敗 → 視為訪客
 }
 
-// 也可在此加入「過期機制」，例如：一年內有效
-// if ((time() - (int)$time) > 365*24*60*60) { header("Location: login.php"); exit; }
-
-// 確認 DB 中的 money_key 仍一致（避免被撤銷）
+// ===============================
+// 3. 確認 DB money_key 是否仍有效
+// ===============================
 $pdo = db();
-$stmt = $pdo->prepare("SELECT id, account, email FROM member WHERE id = ? AND money_key = ? LIMIT 1");
+$stmt = $pdo->prepare("
+    SELECT id, account, email 
+    FROM member 
+    WHERE id = ? AND money_key = ?
+    LIMIT 1
+");
 $stmt->execute([$uid, $key]);
 $user = $stmt->fetch();
 
+// ⚠️ 重點：查無資料 → 不導向 login，仍然視為訪客
 if (!$user) {
-    header("Location: login.php");
-    exit;
+    return;
 }
 
-// 建立 session，讓後續頁面使用
+// ===============================
+// 4. 建立 session，正式登入
+// ===============================
 $_SESSION['user'] = [
     'id'      => (int)$user['id'],
     'account' => $user['account'],
     'email'   => $user['email'] ?? null,
 ];
 
-// 放行
+// 完成！登入成功
 return;

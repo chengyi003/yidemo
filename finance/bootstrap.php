@@ -11,25 +11,53 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 載入 .env（簡單 parser）
-function env(string $key, ?string $default = null): ?string {
+/* ----------------------------------------------------
+   env() — 支援 .env + 系統 getenv()
+---------------------------------------------------- */
+function env(string $key, ?string $default = null): ?string
+{
     static $ENV = null;
+
+    // 第一次呼叫時載入 .env
     if ($ENV === null) {
         $path = __DIR__ . '/.env';
-        $ENV = is_file($path) ? parse_ini_file($path, false, INI_SCANNER_RAW) : [];
+        if (is_file($path)) {
+            $ENV = parse_ini_file($path, false, INI_SCANNER_RAW);
+        } else {
+            $ENV = [];
+        }
     }
-    return $ENV[$key] ?? $default;
+
+    // 先查 .env
+    if (array_key_exists($key, $ENV)) {
+        return $ENV[$key];
+    }
+
+    // 再查系統環境變數
+    $value = getenv($key);
+    if ($value !== false) {
+        return $value;
+    }
+
+    // 否則回傳預設
+    return $default;
 }
 
-// 建立 PDO
-function db(): PDO {
+/* ----------------------------------------------------
+   db() — 建立 PDO 單例
+---------------------------------------------------- */
+function db(): PDO
+{
     static $pdo = null;
-    if ($pdo instanceof PDO) return $pdo;
+    if ($pdo instanceof PDO) {
+        return $pdo;
+    }
 
     $dsn = "mysql:host=localhost;dbname=finance_db;charset=utf8";
     $pdo = new PDO($dsn, "root", "", [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
+
     return $pdo;
 }
