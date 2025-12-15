@@ -94,7 +94,7 @@ if ($chk->rowCount() > 0) {
 }
 
 /* ====== 新增會員 ====== */
-$sql = "INSERT INTO member (account, pwd, email, is_admin) VALUES (?, ?, ?, 0)";
+$sql = "INSERT INTO member (account, pwd, email, is_admin) VALUES (?, ?, ?)";
 $insert = $pdo->prepare($sql);
 $insert->execute([
     $account,

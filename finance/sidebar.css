@@ -1,24 +1,85 @@
-/* 左側滑出 */
+/* ==========================================
+   左側滑出選單（側邊欄）
+   ========================================== */
+
+/* 整個側欄區塊 */
 .side-menu{
-  position:fixed; left:-220px; top:0; width:220px; height:100%;
-  background:#ffffffee; backdrop-filter:blur(6px);
-  box-shadow:4px 0 12px rgba(0,0,0,.2);
-  transition:all .3s ease; z-index:2000; padding:20px;
+  position:fixed;
+  left:-220px; 
+  top:0;
+  width:220px; 
+  height:100%;
+
+  /* 淺灰霧面背景（你剛剛要的版本） */
+  background:rgba(245,245,245,0.95);
+  backdrop-filter:blur(8px);
+
+  box-shadow:4px 0 15px rgba(0,0,0,.18);
+  transition:all .3s ease;
+  z-index:2000;
+  padding:20px;
 }
+
 .side-menu.open{ left:0; }
 
-.side-header{ font-size:18px; font-weight:700; color:#444; margin-bottom:20px; }
-.side-links a{
-  display:block; padding:12px 0; color:#555; font-size:15px; font-weight:600;
-  text-decoration:none; border-bottom:1px solid #eee; transition:.2s;
+/* 標題文字 */
+.side-header{
+  font-size:18px;
+  font-weight:700;
+  color:#444;
+  margin-bottom:20px;
 }
-.side-links a:hover{ color:#764ba2; }
 
-.keep-login{ margin-top:20px; display:flex; gap:10px; align-items:center; font-size:14px; color:#444; }
+/* 每一個連結 */
+.side-links a{
+  display:block;
+  padding:12px 0;
+  color:#555;
+  font-size:15px;
+  font-weight:600;
+  text-decoration:none;
+  border-bottom:1px solid #eee;
+  transition:.2s;
+}
+
+.side-links a:hover{
+  color:#764ba2;
+}
+
+/* 保持登入區塊 */
+.keep-login{
+  margin-top:20px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  font-size:14px;
+  color:#444;
+}
+
+/* ==========================================
+   漢堡按鈕（側欄開關）
+   ========================================== */
 
 .side-toggle{
-  position:fixed; top:20px; left:20px; background:#ffffffcc; padding:10px 14px;
-  border-radius:10px; font-size:20px; box-shadow:0 4px 12px rgba(0,0,0,.2);
-  cursor:pointer; z-index:2100; transition:.2s;
+  position:fixed;
+  top:20px; 
+  left:20px;
+
+  /* 由白改成灰色按鈕 */
+  background:rgba(230,230,230,0.95);
+
+  padding:10px 14px;
+  border-radius:10px;
+
+  font-size:20px;
+  cursor:pointer;
+
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+  transition:.2s;
+
+  z-index:2100;
 }
-.side-toggle:hover{ transform:scale(1.05); }
+
+.side-toggle:hover{
+  transform:scale(1.05);
+}
