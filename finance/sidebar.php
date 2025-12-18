@@ -6,7 +6,8 @@
     <a href="login.php">登入</a>
     <a href="logout.php">登出</a>
     <a href="register.php">註冊</a>
-    <a href="forgot.php">忘記密碼</a>
+    <a href="forgot_password.php">忘記密碼</a>
+
 
     <!-- <label class="keep-login">
       <input type="checkbox" id="keepLogin"> 保持登入
@@ -16,3 +17,4 @@
 
 <!-- 左側開關按鈕 -->
 <div class="side-toggle" onclick="toggleMenu()">☰</div>
+

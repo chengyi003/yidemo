@@ -1,14 +1,13 @@
 <?php
 $dsn="mysql:host=localhost;dbname=finance_db;charset=utf8";
 $pdo=new PDO($dsn,'root','');
+session_start();
 
 
 require 'auth_check.php';
+if (empty($_SESSION['user'])) {
+    header("Location: login.php");;// 個人登入後的頁面
 
-if (!empty($_SESSION['user'])) {
-    include "my_index.php"; // 個人登入後的頁面
-} else {
-    header("index.php"); // 一般訪客版
 }
 
 
@@ -19,7 +18,7 @@ if (!empty($_SESSION['user'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💰 消費記錄系統</title>
+    <title>💰 My消費記錄系統</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="sidebar.css">
 
@@ -48,8 +47,11 @@ $expenses=$pdo->query("SELECT `daily_account`.*,
                              `payment_method`
                         WHERE `daily_account`.`category`=`category`.`id`
                                 AND `daily_account`.`payment_method`=`payment_method`.`id`
+                                and `daily_account`.`member_id`={$_SESSION['user']['id']}
                     Order By `date` DESC, 
                              `time` DESC")->fetchALL(PDO::FETCH_ASSOC);
+
+
 
 if (count($expenses) > 0) {
     echo '<div class="table-header">';

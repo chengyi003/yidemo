@@ -3,8 +3,28 @@ $dsn="mysql:host=localhost;dbname=finance_db;charset=utf8";
 $pdo=new PDO($dsn,'root','');
 
 
+
+require 'auth_check.php';
+
+
+if (!empty($_SESSION['user'])) {
+echo 456;
+header("Location: my_index.php");;// 個人登入後的頁面
+}   else {
+echo 123;
+    header("index.php"); // 一般訪客版
+}
+
+
+
 ?>
 
+
+
+<?php
+
+print_r($_SESSION);
+?>
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -21,7 +41,7 @@ $pdo=new PDO($dsn,'root','');
 
     <div class="container">
         <div class="header">
-            <h1>💰 記帳系統</h1>
+            <h1>💰 demo記帳系統</h1>
             <p>智慧消費管理，掌握每一筆支出</p>
             <div class="action-buttons">
                 <a href="form_expense.php" class="btn btn-primary">➕ 新增消費</a>

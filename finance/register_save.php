@@ -1,5 +1,9 @@
 <?php
 header("Content-Type: application/json; charset=utf-8");
+date_default_timezone_set('Asia/Taipei');
+
+
+
 
 // ★★★★★ 防止所有雜訊輸出（最重要）
 ob_start();
