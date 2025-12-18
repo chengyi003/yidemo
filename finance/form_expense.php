@@ -1,6 +1,6 @@
 <?php 
 require_once("db.php");
-
+session_start();
 // 建 daily_account 的 DB 物件
 $AccountDB = new DB("daily_account");
 $CategoryDB = new DB("category");
@@ -31,6 +31,8 @@ $categories = $CategoryDB->all();
                 <!-- 基本資訊 -->
                 <div class="form-section">
                     <h3>基本資訊</h3>
+                            <input type="hidden" name="member_id" value="<?php echo $_SESSION['user']['id']; ?>">
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>日期 *</label>

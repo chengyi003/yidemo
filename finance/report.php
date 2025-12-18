@@ -1,6 +1,7 @@
 <?php
 // ====== 1. 載入 Composer ======
 require __DIR__ . '/vendor/autoload.php';
+session_start();
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -20,6 +21,7 @@ SELECT
 FROM daily_account
 JOIN category ON daily_account.category = category.id
 JOIN payment_method ON daily_account.payment_method = payment_method.id
+WHERE daily_account.member_id = {$_SESSION['user']['id']}
 ORDER BY date DESC, time DESC
 ";
 

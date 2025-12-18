@@ -29,7 +29,7 @@ if (empty($_SESSION['user'])) {
 
     <div class="container">
         <div class="header">
-            <h1>💰 記帳系統</h1>
+            <h1>💰 MY記帳系統</h1>
             <p>智慧消費管理，掌握每一筆支出</p>
             <div class="action-buttons">
                 <a href="form_expense.php" class="btn btn-primary">➕ 新增消費</a>
